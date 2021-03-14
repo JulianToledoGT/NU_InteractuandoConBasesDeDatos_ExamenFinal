@@ -26,7 +26,9 @@
             if (nombreUsuario.val() != "" && pass.val() != "") {
                 $.post('/login',{user: nombreUsuario.val(), pass: pass.val()}, function(response) {
                     if (response == "Validado") {
-                        window.location.href = "http://localhost:3000/main.html"
+                      window.location.href = "/main.html"
+                    }else{
+                      alert("Credenciales incorrectas. Verifique.")
                     }
                 })
             } else {

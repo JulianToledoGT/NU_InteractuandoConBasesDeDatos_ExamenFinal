@@ -2,16 +2,7 @@ crear usuario de la db
 use admin
 db.createUser(
   {
-    user: "SA",
-    pwd: "miClaveUltraSecret-001",
-    roles: [ { role: "root", db: "admin" } ]
+    user: "customer",
+    pwd: "miClaveUltraSecreta-001",
+    roles: [ { role: "readWrite", db: "agenda" } ]
   })
-
-
-crear usuario de aplicación
-mongoimport --db agenda --collection users --file userSA.json
-
-archivo userSA.json {
-    userName: "SA",
-    password: "miClaveUltraSecret-002"
-}

@@ -11,17 +11,11 @@ async function startDB() { //Crea un registro en la colección de usuarios, en c
 };
 
 async function login(login) { //Verifica si hay un registro que coincida para el usuario y la contraseña recibida.
-    try{
-        userModel.findOne({email: login.user, password: login.pass}).exec(function (err, docs) {
-            if (docs == null) {
-                console.log("Las credenciales no coinciden. Verifique.");
-            } else {
-                console.log("¡Bienvenido!");
-            }
-        })
-    }
-    catch(err){
-        console.log(err)
+    let doc = await userModel.findOne({email: login.user, password: login.pass}).exec();
+    if (doc != null){
+        return "Validado"   //{tcMsg : "¡Bienvenido!"}
+    }else{
+        return "No validado"   //{tcMsg : "Credenciales inválidas. Verifique."}
     }
 };
 
