@@ -6,9 +6,9 @@ const express = require('express'),
     app = express(),
     router = express.Router(),
     Server = http.createServer(app),
-    PORT = 3000;
+    PORT = 8082;
 
-app.use(express.static("../client"));
+app.use(express.static("client"));
 
 app.use(body_parser.json());
 
@@ -27,6 +27,21 @@ router.route('/login').post((req, res) => {
     let login = { ...req.body };
 
     routes.login(login).then(result => {
+        res.status(201).json(result);
+    })
+});
+
+app.get("/events/all", function (req, res) {
+    routes.getAllEvents().then(result => {
+        res.status(201).json(result);
+    })
+});
+
+router.route('/events/new').post((req, res) => {
+    let record = { ...req.body }
+console.log('2.-Index ::: ' + record)
+
+    routes.addRecord(record).then(result => {
         res.status(201).json(result);
     })
 });
