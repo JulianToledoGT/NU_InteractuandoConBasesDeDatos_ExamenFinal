@@ -37,11 +37,11 @@ app.get("/events/all", function (req, res) {
     })
 });
 
-router.route('/events/new').post((req, res) => {
-    let record = { ...req.body }
-console.log('2.-Index ::: ' + record)
+// router.route('/events/new').post((req, res) => {
+//     let record = { ...req.body }
+// console.log('2.-Index ::: ' + record)
 
-    routes.addRecord(record).then(result => {
-        res.status(201).json(result);
-    })
-});
+//     routes.addRecord(record).then(result => {
+//         res.status(201).json(result);
+//     })
+// });

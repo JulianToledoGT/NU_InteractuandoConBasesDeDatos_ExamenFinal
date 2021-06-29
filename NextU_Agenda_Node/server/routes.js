@@ -33,7 +33,10 @@ async function login(login) { //Verifica si hay un registro que coincida para el
 
 async function getAllEvents() {
     var data = "";
-    var records = await eventModel.find().exec();   //db.eventos.find({$and:[{"startDate": {$lte: endDate}},{"endDate": {$gte: startDate}}]})
+    var records = await eventModel.find().exec();
+    // console.log(records)
+    // db.eventos.find({$and:[{"startDate": {$lte: endDate}},{"endDate": {$gte: startDate}}]})
+
     if (records == "") {
         var evento = new eventModel({
             eventId: "Hoy",
@@ -44,12 +47,18 @@ async function getAllEvents() {
             endTime: "00:00"
         });
         evento.save();
-    } else {
+    }
+    else {
         for (var record in records) {
+            // console.log(records[record])
+            var Id="";
             var eventId = "";
             var title = "";
             var startDT = "";
             var endDT = "";
+            if(records[record]._id !== undefined){
+                Id=records[record]._id;
+            }
             if (records[record].eventId !== undefined) {
                 eventId = records[record].eventId;
             }
@@ -68,16 +77,17 @@ async function getAllEvents() {
             if (records[record].endTime !== undefined && records[record].endTime !== undefined) {
                 endDT += "T" + records[record].endTime;
             }
-            if (data == "") {
-                data = '[{"eventId":"' + eventId + '","title":"' + title + '","startDT":"' + startDT + '","endDT":"' + endDT + '"}';
-            } else {
-                data += ',{"eventId":"' + eventId + '","title":"' + title + '","startDT":"' + startDT + '","endDT":"' + endDT + '"}';
-            }
+            if (data == "") {data = '['} else {data += ','};
+            data += '{"eventId":"' + eventId + '","title":"' + title + '","startDT":"' + startDT + '","endDT":"' + endDT + '"}';
         }
         if (data != "") {
             data += "]";
         }
-        return data
+        data = JSON.parse(data);
+        data = JSON.parse('[{"eventId":"1","title":"Hola Mundo","start":"2021-06-23 14:30","end":"2021-06-23 17:00"}]');
+
+        // console.log(data);
+        return data;
     }
 }
 

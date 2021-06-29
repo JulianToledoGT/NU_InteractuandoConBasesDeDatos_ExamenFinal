@@ -1,6 +1,6 @@
 class EventManager {
     constructor() {
-        this.urlBase = "/events"
+        this.urlBase = "http://localhost:8082/events"
         this.obtenerDataInicial()
         this.inicializarFormulario()
         this.guardarEvento()
@@ -13,55 +13,63 @@ class EventManager {
         })
     }
 
+    actualizarEvento(evento) {
+        // let url = this.urlBase + "/update/"
+        // $.post(url,
+        //     {
+        //         id: evento.id,
+        //         start: evento.start,
+        //         end: evento.end
+        //     }, (response) => {
+        //         alert(response)
+        //     })
+    }
+
+    eliminarEvento(evento) {
+        // let eventId = evento.id
+        // $.post('/events/delete/', { id: eventId }, (response) => {
+        //     alert(response)
+        // })
+    }
+
     guardarEvento() {
         $('.addButton').on('click', (evento) => {
             evento.preventDefault()
-            let title = $('#titulo').val(),
-                startDT = $('#start_date').val(),
-                endDT = '';
+            let nombre = $('#titulo').val(),
+                start = $('#start_date').val(),
+                title = $('#titulo').val(),
+                end = '',
+                start_hour = '',
+                end_hour = '';
             if (!$('#allDay').is(':checked')) {
-                startDT += 'T' + $('#start_hour').val()
-                endDT = $('#end_date').val() + 'T' + $('#end_hour').val()
+                end = $('#end_date').val()
+                start_hour = $('#start_hour').val()
+                end_hour = $('#end_hour').val()
+                start = start + 'T' + start_hour
+                end = end + 'T' + end_hour
             }
             let url = this.urlBase + "/new"
-console.log('1.-App:   ' + startDT + '  --  ' + endDT + '  ::   ' + url)
-            if (title != "" && startDT != "") {
-                let evento = {
+            if (title != "" && start != "") {
+                let ev = {
                     title: title,
-                    startDT: startDT,
-                    endDT: endDT
+                    start: start,
+                    end: end
                 }
-                $.post(url, evento, (response) => {
-                    alert(response)
-                })
-            //     $('.calendario').fullCalendar('renderEvent', evento)
+                var Id = "";
+                // $.post(url, ev, function (response) {
+                //     $('.calendario').fullCalendar('renderEvent', {
+                //         id: response,
+                //         title: $('#titulo').val(),
+                //         start: start,
+                //         end: end
+                //     })
+                // })
+                //                $('.calendario').fullCalendar('renderEvent', ev)
             } else {
-                alert("Hay datos requeridos pendientes de especificar. Verifique.")
+                alert("Complete los campos obligatorios para el evento")
             }
         })
     }
-
-//JT-Ini
-    actualizarEvento(evento) {
-        let url = this.urlBase + "/update/"
-        console.log(url);
-        $.post(url,
-            {
-                id: evento.id,
-                start: evento.start,
-                end: evento.end
-            }, (response) => {
-                alert(response)
-            })
-    }
-//JT-Fin
-    eliminarEvento(evento) {
-        let eventId = evento.id
-        $.post('/events/delete/' + eventId, { id: eventId }, (response) => {
-            alert(response)
-        })
-    }
-
 
     inicializarFormulario() {
         $('#start_date, #titulo, #end_date').val('');
@@ -91,9 +99,9 @@ console.log('1.-App:   ' + startDT + '  --  ' + endDT + '  ::   ' + url)
     inicializarCalendario(eventos) {
         $('.calendario').fullCalendar({
             header: {
-                left: 'prev, next, today',
+                left: 'prev,next today',
                 center: 'title',
-                right: 'month, agendaWeek, basicDay'
+                right: 'month,agendaWeek,basicDay'
             },
             defaultDate: Date.getdate,
             navLinks: true,
@@ -104,25 +112,25 @@ console.log('1.-App:   ' + startDT + '  --  ' + endDT + '  ::   ' + url)
             timeFormat: 'H:mm',
             eventDrop: (event) => {
                 this.actualizarEvento(event)
-            }//,
-            //events: eventos,
-            // eventDragStart: (event, jsEvent) => {
-            //      $('.delete').find('img').attr('src', "img/trash-open.png");
-            //      $('.delete').css('background-color', '#a70f19')
-            // }
-            //, eventDragStop: (event, jsEvent) => {
-            //     var trashEl = $('.delete');
-            //     var ofs = trashEl.offset();
-            //     var x1 = ofs.left;
-            //     var x2 = ofs.left + trashEl.outerWidth(true);
-            //     var y1 = ofs.top;
-            //     var y2 = ofs.top + trashEl.outerHeight(true);
-            //     if (jsEvent.pageX >= x1 && jsEvent.pageX <= x2 &&
-            //         jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
-            //         this.eliminarEvento(event)
-            //         $('.calendario').fullCalendar('removeEvents', event.id);
-            //     }
-            // }
+            },
+            events: eventos,
+            eventDragStart: (event, jsEvent) => {
+                $('.delete').find('img').attr('src', "../img/trash-open.png");
+                $('.delete').css('background-color', '#a70f19')
+            },
+            eventDragStop: (event, jsEvent) => {
+                var trashEl = $('.delete');
+                var ofs = trashEl.offset();
+                var x1 = ofs.left;
+                var x2 = ofs.left + trashEl.outerWidth(true);
+                var y1 = ofs.top;
+                var y2 = ofs.top + trashEl.outerHeight(true);
+                if (jsEvent.pageX >= x1 && jsEvent.pageX <= x2 &&
+                    jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
+                    this.eliminarEvento(event)
+                    $('.calendario').fullCalendar('removeEvents', event.id);
+                }
+            }
         })
     }
 }
