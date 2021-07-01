@@ -25,23 +25,29 @@ Server.listen(PORT, function () {
 
 router.route('/login').post((req, res) => {
     let login = { ...req.body };
-
     routes.login(login).then(result => {
         res.status(201).json(result);
     })
 });
 
-app.get("/events/all", function (req, res) {
-    routes.getAllEvents().then(result => {
+router.route('/events/all').post((req, res) => {
+    let user = { ...req.body };
+    routes.getAllEvents(user).then(result => {
         res.status(201).json(result);
     })
 });
 
-// router.route('/events/new').post((req, res) => {
-//     let record = { ...req.body }
-// console.log('2.-Index ::: ' + record)
+router.route('/events/new').post((req, res) => {
+    let record = { ...req.body }
+    routes.addRecord(record).then(result => {
+        res.status(201).json(result);
+    })
+});
 
-//     routes.addRecord(record).then(result => {
+// app.get("/events/all", function (req, res) {
+// console.log(record);
+
+//     routes.getAllEvents().then(result => {
 //         res.status(201).json(result);
 //     })
 // });

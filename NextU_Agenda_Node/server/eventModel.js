@@ -1,5 +1,5 @@
 const event = {
-    eventId: String,
+    user: String,
     title: String,
     startDate: String,
     startTime: String,

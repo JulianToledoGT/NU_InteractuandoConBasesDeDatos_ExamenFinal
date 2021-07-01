@@ -2,9 +2,10 @@ function login (){
     if ($('#user').val() != "" && $('#pass').val() != "") {
         $.post('http://localhost:8082/login',{user: $('#user').val(), pass: $('#pass').val()}, function(res) {
             if (res == "Validado") {
-              window.location.href = "main.html"
+                sessionStorage.setItem('nu_agenda_user', $('#user').val());
+                window.location.href = "main.html"
             }else{
-              alert("Credenciales incorrectas. Verifique.")
+                alert("Credenciales incorrectas. Verifique.")
             }
         })
     } else {

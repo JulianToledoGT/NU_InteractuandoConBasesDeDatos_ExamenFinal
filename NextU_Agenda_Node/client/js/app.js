@@ -1,5 +1,6 @@
 class EventManager {
     constructor() {
+        this.user = sessionStorage.getItem('nu_agenda_user')
         this.urlBase = "http://localhost:8082/events"
         this.obtenerDataInicial()
         this.inicializarFormulario()
@@ -8,8 +9,8 @@ class EventManager {
 
     obtenerDataInicial() {
         let url = this.urlBase + "/all"
-        $.get(url, (response) => {
-            this.inicializarCalendario(response)
+        $.post(url, {user: this.user}, (res) => {
+            this.inicializarCalendario(res)
         })
     }
 
@@ -41,30 +42,32 @@ class EventManager {
                 end = '',
                 start_hour = '',
                 end_hour = '';
-            if (!$('#allDay').is(':checked')) {
+                if (!$('#allDay').is(':checked')) {
                 end = $('#end_date').val()
                 start_hour = $('#start_hour').val()
                 end_hour = $('#end_hour').val()
-                start = start + 'T' + start_hour
-                end = end + 'T' + end_hour
+                start = start + ' ' + start_hour
+                end = end + ' ' + end_hour
             }
             let url = this.urlBase + "/new"
             if (title != "" && start != "") {
                 let ev = {
+                    user: this.user,
                     title: title,
                     start: start,
                     end: end
                 }
                 var Id = "";
-                // $.post(url, ev, function (response) {
-                //     $('.calendario').fullCalendar('renderEvent', {
-                //         id: response,
-                //         title: $('#titulo').val(),
-                //         start: start,
-                //         end: end
-                //     })
-                // })
-                //                $('.calendario').fullCalendar('renderEvent', ev)
+                $.post(url, ev, function (response) {
+                    $('.calendario').fullCalendar('renderEvent', {
+                        id: response,
+                        user: this.user,
+                        title: $('#titulo').val(),
+                        start: start,
+                        end: end
+                    })
+                })
+                $('.calendario').fullCalendar('renderEvent', ev)
             } else {
                 alert("Complete los campos obligatorios para el evento")
             }

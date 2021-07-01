@@ -1,10 +1,12 @@
 const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
+
     user = require('./userModel.js'),
-    event = require('./eventModel.js'),
     userSchema = new Schema(user),
-    eventSchema = new Schema(event),
     userModel = mongoose.model("usuarios", userSchema),
+
+    event = require('./eventModel.js'),
+    eventSchema = new Schema(event),
     eventModel = mongoose.model("eventos", eventSchema);
 
 mongoose.connect('mongodb://localhost:27017/agenda', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -31,37 +33,27 @@ async function login(login) { //Verifica si hay un registro que coincida para el
     }
 };
 
-async function getAllEvents() {
-    var data = "";
-    var records = await eventModel.find().exec();
-    // console.log(records)
-    // db.eventos.find({$and:[{"startDate": {$lte: endDate}},{"endDate": {$gte: startDate}}]})
-
-    if (records == "") {
+async function getAllEvents(user) {
+    let data = "[";
+    let records = await eventModel.find({ "user": user.user }).exec();
+    //let records = await eventModel.find({ "user" : "juliantoledogt@hotmail.com" }).exec();
+    if (records == null) {
         var evento = new eventModel({
-            eventId: "Hoy",
+            user: user.user,
             title: "Iniciar mi agenda",
-            startDate: startDate,
+            startDate: "2021-06-30",
             startTime: "00:00",
-            endDate: startDate,
-            endTime: "00:00"
+            endDate: "2021-06-30",
+            endTime: "23:59"
         });
         evento.save();
-    }
-    else {
+    } else {
         for (var record in records) {
-            // console.log(records[record])
-            var Id="";
-            var eventId = "";
+            var Id = records[record]._id;
             var title = "";
             var startDT = "";
             var endDT = "";
-            if(records[record]._id !== undefined){
-                Id=records[record]._id;
-            }
-            if (records[record].eventId !== undefined) {
-                eventId = records[record].eventId;
-            }
+
             if (records[record].title !== undefined) {
                 title = records[record].title;
             }
@@ -69,34 +61,27 @@ async function getAllEvents() {
                 startDT = records[record].startDate;
             }
             if (records[record].startTime !== undefined && records[record].startTime !== undefined) {
-                startDT += "T" + records[record].startTime;
+                startDT += " " + records[record].startTime;
             }
             if (records[record].endDate !== undefined) {
                 endDT = records[record].endDate;
             }
             if (records[record].endTime !== undefined && records[record].endTime !== undefined) {
-                endDT += "T" + records[record].endTime;
+                endDT += " " + records[record].endTime;
             }
-            if (data == "") {data = '['} else {data += ','};
-            data += '{"eventId":"' + eventId + '","title":"' + title + '","startDT":"' + startDT + '","endDT":"' + endDT + '"}';
+            if (data !== "[") {data += ","};
+            data += '{"Id":"' + Id + '","title":"' + title  + '","start":"' + startDT + '","end":"' + endDT + '"}';
         }
-        if (data != "") {
-            data += "]";
-        }
-        data = JSON.parse(data);
-        data = JSON.parse('[{"eventId":"1","title":"Hola Mundo","start":"2021-06-23 14:30","end":"2021-06-23 17:00"}]');
-
-        // console.log(data);
-        return data;
+        if (data !==  "") {data += "]"};;
+        return JSON.parse(data);
     }
 }
 
 async function addRecord(record) { //Verifica si hay un registro que coincida para el usuario y la contraseña recibida.
-console.log('3.-routes')
-
-    let title = record.title || '',
-        startDT = (record.startDT).split("T") || '',
-        endDT = (req.body.endDT).split("T") || '';
+    let user = record.user,
+        title = record.title,
+        startDT = (record.start).split(" "),
+        endDT = (record.end).split(" ");
 
     let startDate = startDT[0],
         startTime = startDT[1],
@@ -106,7 +91,7 @@ console.log('3.-routes')
     eventModel.findOne({ title: title, startDate: startDate, startTime: startTime }).exec(function (err, docs) {
         if (docs == null) {
             var evento = new eventModel({
-                eventId: "Hoy",
+                user : user,
                 title: title,
                 startDate: startDate,
                 startTime: startTime,
@@ -114,7 +99,7 @@ console.log('3.-routes')
                 endTime: endTime
             });
             evento.save();
-            //return evento;
+            return evento;
         }
     });
 };
