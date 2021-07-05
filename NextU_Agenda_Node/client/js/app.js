@@ -14,25 +14,6 @@ class EventManager {
         })
     }
 
-    actualizarEvento(evento) {
-        // let url = this.urlBase + "/update/"
-        // $.post(url,
-        //     {
-        //         id: evento.id,
-        //         start: evento.start,
-        //         end: evento.end
-        //     }, (response) => {
-        //         alert(response)
-        //     })
-    }
-
-    eliminarEvento(evento) {
-        // let eventId = evento.id
-        // $.post('/events/delete/', { id: eventId }, (response) => {
-        //     alert(response)
-        // })
-    }
-
     guardarEvento() {
         $('.addButton').on('click', (evento) => {
             evento.preventDefault()
@@ -57,7 +38,7 @@ class EventManager {
                     start: start,
                     end: end
                 }
-                var Id = "";
+                // var Id = "";
                 $.post(url, ev, function (response) {
                     $('.calendario').fullCalendar('renderEvent', {
                         id: response,
@@ -66,12 +47,34 @@ class EventManager {
                         start: start,
                         end: end
                     })
-                })
+                });
+                location.reload();
                 $('.calendario').fullCalendar('renderEvent', ev)
             } else {
                 alert("Complete los campos obligatorios para el evento")
             }
         })
+    }
+
+    actualizarEvento(evento) {
+        let url = this.urlBase + "/update/"
+        // $.post(url,
+        //     {
+        //         id: evento.id,
+        //         start: evento.start,
+        //         end: evento.end
+        //     }, (response) => {
+        //         alert(response)
+        //     })
+    }
+
+    eliminarEvento(evento) {
+        let url = this.urlBase + "/delete/"
+        $.post(url, {id: evento.Id}, (res) => {
+            alert(res)
+        });
+        alert("Evento eliminado.");
+        location.reload();
     }
 
     inicializarFormulario() {
@@ -98,7 +101,6 @@ class EventManager {
             }
         })
     }
-
     inicializarCalendario(eventos) {
         $('.calendario').fullCalendar({
             header: {
@@ -115,10 +117,11 @@ class EventManager {
             timeFormat: 'H:mm',
             eventDrop: (event) => {
                 this.actualizarEvento(event)
+                console.log(event)
             },
             events: eventos,
             eventDragStart: (event, jsEvent) => {
-                $('.delete').find('img').attr('src', "../img/trash-open.png");
+                $('.delete').find('img').attr('src', "./img/trash-open.png");
                 $('.delete').css('background-color', '#a70f19')
             },
             eventDragStop: (event, jsEvent) => {
@@ -130,10 +133,12 @@ class EventManager {
                 var y2 = ofs.top + trashEl.outerHeight(true);
                 if (jsEvent.pageX >= x1 && jsEvent.pageX <= x2 &&
                     jsEvent.pageY >= y1 && jsEvent.pageY <= y2) {
-                    this.eliminarEvento(event)
-                    $('.calendario').fullCalendar('removeEvents', event.id);
+                    this.eliminarEvento(event);
+                    // $('.calendario').fullCalendar('removeEvents', event.Id)
                 }
-            }
+                $('.delete').find('img').attr('src', "./img/delete.png");
+                console.log($(event.Id).parent())
+        }
         })
     }
 }

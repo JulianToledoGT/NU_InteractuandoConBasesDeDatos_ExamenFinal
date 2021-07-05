@@ -1,0 +1,2 @@
+use agenda
+db.usuarios.insert({"email":"usuario@agenda.com", "password":"ABC", "__v": 0})

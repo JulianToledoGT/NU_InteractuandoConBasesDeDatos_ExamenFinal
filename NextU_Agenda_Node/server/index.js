@@ -44,6 +44,13 @@ router.route('/events/new').post((req, res) => {
     })
 });
 
+router.route('/events/delete').post((req, res) => {
+    let record = { ...req.body };
+    routes.delRecord(record).then(result => {
+        res.status(201).json(result);
+    })
+});
+
 // app.get("/events/all", function (req, res) {
 // console.log(record);
 

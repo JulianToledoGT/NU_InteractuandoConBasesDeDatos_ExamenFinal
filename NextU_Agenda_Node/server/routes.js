@@ -104,9 +104,16 @@ async function addRecord(record) { //Verifica si hay un registro que coincida pa
     });
 };
 
+async function delRecord(record) { //Verifica si hay un registro que coincida para el usuario y la contraseña recibida.
+    eventModel.deleteOne({ _id : record.id }).exec(function (err, docs) {
+        return "Se ha eliminado el registro."
+    });
+};
+
 module.exports = {
     login: login,
     startDB: startDB,
     getAllEvents: getAllEvents,
-    addRecord: addRecord
+    addRecord: addRecord,
+    delRecord: delRecord
 };
